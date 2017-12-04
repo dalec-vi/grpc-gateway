@@ -56,6 +56,7 @@ type swaggerObject struct {
 	Consumes     []string                            `json:"consumes"`
 	Produces     []string                            `json:"produces"`
 	Paths        swaggerPathsObject                  `json:"paths"`
+	SecurityDefinitions swaggerSecurityDefinitionsObject `json:"securityDefinitions",omitempty`
 	Definitions  swaggerDefinitionsObject            `json:"definitions"`
 	ExternalDocs *swaggerExternalDocumentationObject `json:"externalDocs,omitempty"`
 }
@@ -81,9 +82,11 @@ type swaggerOperationObject struct {
 	Parameters  swaggerParametersObject `json:"parameters,omitempty"`
 	Tags        []string                `json:"tags,omitempty"`
 	Deprecated  bool                    `json:"deprecated,omitempty"`
-
+	Security    []swaggerSecurityRequrementObject    `json:"security,omitempty"`
 	ExternalDocs *swaggerExternalDocumentationObject `json:"externalDocs,omitempty"`
 }
+
+type swaggerSecurityRequrementObject map[string][]string
 
 type swaggerParametersObject []swaggerParameterObject
 
@@ -102,6 +105,19 @@ type swaggerParameterObject struct {
 	// Or you can explicitly refer to another type. If this is defined all
 	// other fields should be empty
 	Schema *swaggerSchemaObject `json:"schema,omitempty"`
+}
+
+type swaggerSecurityDefinitionsObject map[string]*swaggerSecuritySchemeObject
+
+type swaggerSecuritySchemeObject struct {
+	Type             string            `json:"type,omitempty"`
+	Description      string            `json:"description,omitempty"`
+	Name             string            `json:"name,omitempty"`
+	In               string            `json:"in,omitempty"`
+	Flow             string            `json:"flow,omitempty"`
+	AuthorizationUrl string            `json:"authorizationUrl,omitempty"`
+	TokenUrl         string            `json:"tokenUrl,omitempty"`
+	Scopes           map[string]string `json:"scopes,omitempty"`
 }
 
 // core part of schema, which is common to itemsObject and schemaObject.

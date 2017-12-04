@@ -33,8 +33,7 @@ message Swagger {
   reserved 9;
   // field 10 is reserved for 'responses'.
   reserved 10;
-  // field 11 is reserved for 'securityDefinitions'.
-  reserved 11;
+  map<string, SecurityScheme> securityDefinitions = 11;
   // field 12 is reserved for repeated 'security'.
   reserved 12;
   // field 13 is reserved for 'tags', which are supposed to be exposed as and
@@ -63,9 +62,12 @@ message Operation {
   reserved 9;
   repeated string schemes = 10;
   bool deprecated = 11;
-  // field 12 is reserved for 'security'.
-  reserved 12;
-  
+  // following https://github.com/go-openapi/analysis/blob/8ed83f2e/analyzer.go#L407-L411
+  message SecurityRequirement {
+    string name = 1;
+    repeated string scopes = 2;
+  }
+  repeated SecurityRequirement security = 12;
 }
 
 // `Info` is a representation of OpenAPI v2 specification's Info object.
@@ -92,6 +94,20 @@ message Contact {
   string name = 1;
   string url = 2;
   string email = 3;
+}
+
+// `SecurityScheme` is a representation of OpenAPI v2 specification's SecurityScheme object.
+//
+// See: https://github.com/OAI/OpenAPI-Specification/blob/3.0.0/versions/2.0.md#securitySchemeObject
+message SecurityScheme {
+  string type = 1;
+  string description = 2;
+  string name = 3;
+  string in = 4;
+  string flow = 5;
+  string authorizationUrl = 6;
+  string tokenUrl = 7;
+  map<string, string> scopes = 8;
 }
 
 // `ExternalDocumentation` is a representation of OpenAPI v2 specification's

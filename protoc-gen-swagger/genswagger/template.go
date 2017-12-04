@@ -585,6 +585,15 @@ func renderServices(services []*descriptor.Service, paths swaggerPathsObject, re
 					if err != nil {
 						panic(err)
 					}
+					if opts.Security != nil {
+						operationObject.Security = make([]swaggerSecurityRequrementObject, len(opts.Security))
+						for i, securityRequirement := range opts.Security {
+							scopes := make([]string, len(securityRequirement.Scopes))
+							copy(securityRequirement.Scopes, scopes)
+							operationObject.Security[i] = make(map[string][]string)
+							operationObject.Security[i][securityRequirement.Name] = scopes
+						}
+					}
 					if opts.ExternalDocs != nil {
 						if operationObject.ExternalDocs == nil {
 							operationObject.ExternalDocs = &swaggerExternalDocumentationObject{}
@@ -718,6 +727,22 @@ func applyTemplate(p param) (string, error) {
 		if len(spb.Produces) > 0 {
 			s.Produces = make([]string, len(spb.Produces))
 			copy(s.Produces, spb.Produces)
+		}
+		if spb.SecurityDefinitions != nil {
+			s.SecurityDefinitions = make(map[string]*swaggerSecuritySchemeObject)
+			for key, value := range spb.SecurityDefinitions {
+				sValue := &swaggerSecuritySchemeObject{
+					Type             : value.Type             ,
+					Description      : value.Description      ,
+					Name             : value.Name             ,
+					In               : value.In               ,
+					Flow             : value.Flow             ,
+					AuthorizationUrl : value.AuthorizationUrl ,
+					TokenUrl         : value.TokenUrl         ,
+					Scopes           : value.Scopes           ,
+				}
+				s.SecurityDefinitions[key] = sValue
+			}
 		}
 		if spb.ExternalDocs != nil {
 			if s.ExternalDocs == nil {
